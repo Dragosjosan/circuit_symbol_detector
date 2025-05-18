@@ -16,16 +16,21 @@ This Python script performs template matching to find a specific symbol (resonat
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
+or 
+
+```bash
+pip install uv
+```
 
 2. Create and activate a virtual environment:
 ```bash
-uv venv
-source .venv/bin/activate  # On Unix/macOS
+uv venv .venv --python 3.12
+source .venv/bin/activate
 ```
 
 3. Install dependencies:
 ```bash
-uv pip install opencv-python numpy matplotlib loguru
+uv pip install -r pyproject.toml
 ```
 
 ## Usage
@@ -39,10 +44,6 @@ python main.py
 
 The results will be saved in a `results` directory.
 
-## ⚠️ Important Warning
+## ⚠️ Warning
 
-The template matching algorithm works best when searching for the exact symbol from which the template was extracted. The accuracy may significantly decrease when trying to detect similar but not identical symbols. For optimal results:
-
-1. Use the exact same symbol as your template
-2. Ensure consistent image quality and resolution
-3. Be aware that variations in lighting, scale, or perspective might affect detection accuracy
+The template matching algorithm works only when searching for the exact symbol from which the template was extracted.

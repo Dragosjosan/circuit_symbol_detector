@@ -9,3 +9,8 @@ dependencies = [
     "matplotlib>=3.10.3",
     "opencv-python>=4.11.0.86",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.3.0",
+]

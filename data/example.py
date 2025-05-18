@@ -89,15 +89,21 @@ class PowerPointTemplate:
 
                 try:
                     if "text" in slide_data:
-                        logger.debug(f"Input data contains text data for slide: '{slide_name}'")
+                        logger.debug(
+                            f"Input data contains text data for slide: '{slide_name}'"
+                        )
                         self._replace_text_placeholders(slide, slide_data["text"])
 
                     if "tables" in slide_data:
-                        logger.debug(f"Input data contains table data for slide: '{slide_name}'")
+                        logger.debug(
+                            f"Input data contains table data for slide: '{slide_name}'"
+                        )
                         self._update_tables(slide, slide_data["tables"])
 
                     if "images" in slide_data:
-                        logger.debug(f"Input data contains image data for slide: '{slide_name}'")
+                        logger.debug(
+                            f"Input data contains image data for slide: '{slide_name}'"
+                        )
                         self._replace_images(slide, slide_data["images"])
                 except Exception as e:
                     logger.exception(f"Error processing slide '{slide_name}'")
@@ -117,7 +123,9 @@ class PowerPointTemplate:
                     for key, value in text_data.items():
                         placeholder = "{{" + key + "}}"
                         if placeholder in text:
-                            logger.debug(f"Replacing placeholder: '{placeholder}' with '{value}'")
+                            logger.debug(
+                                f"Replacing placeholder: '{placeholder}' with '{value}'"
+                            )
                             text = text.replace(placeholder, str(value))
 
                     if text != shape.text:
@@ -146,8 +154,11 @@ class PowerPointTemplate:
                         table = table_shapes[table_index].table
                     else:
                         for shape in table_shapes:
-                            if (hasattr(shape, "name") and shape.name == table_index) or (
-                                table_data.get("identifier") and table_data["identifier"] in shape.text
+                            if (
+                                hasattr(shape, "name") and shape.name == table_index
+                            ) or (
+                                table_data.get("identifier")
+                                and table_data["identifier"] in shape.text
                             ):
                                 table = shape.table
                                 break
@@ -160,7 +171,9 @@ class PowerPointTemplate:
                             for c in range(cols):
                                 table.cell(r, c).text = str(row_data[c])
                     else:
-                        logger.warning(f"Table {table_index} not found or no data provided")
+                        logger.warning(
+                            f"Table {table_index} not found or no data provided"
+                        )
                 except Exception as e:
                     logger.exception(f"Error updating table {table_index}")
                     continue
@@ -179,17 +192,29 @@ class PowerPointTemplate:
 
                     if image_name.isdigit():
                         image_index = int(image_name)
-                        images = [shape for shape in slide.shapes if shape.shape_type == MSO_SHAPE_TYPE.PICTURE]
+                        images = [
+                            shape
+                            for shape in slide.shapes
+                            if shape.shape_type == MSO_SHAPE_TYPE.PICTURE
+                        ]
                         if image_index < len(images):
-                            self._replace_single_image(slide, images[image_index], image_path)
+                            self._replace_single_image(
+                                slide, images[image_index], image_path
+                            )
                             continue
                         placeholders = [
-                            shape for shape in slide.shapes if shape.shape_type == MSO_SHAPE_TYPE.PLACEHOLDER
+                            shape
+                            for shape in slide.shapes
+                            if shape.shape_type == MSO_SHAPE_TYPE.PLACEHOLDER
                         ]
                         if image_index < len(placeholders):
-                            self._replace_single_image(slide, placeholders[image_index], image_path)
+                            self._replace_single_image(
+                                slide, placeholders[image_index], image_path
+                            )
                             continue
-                        logger.warning(f"No suitable image placeholder found for index {image_index}")
+                        logger.warning(
+                            f"No suitable image placeholder found for index {image_index}"
+                        )
                     else:
                         found = False
                         for shape in slide.shapes:
@@ -198,13 +223,18 @@ class PowerPointTemplate:
                                 or shape.shape_type == MSO_SHAPE_TYPE.PLACEHOLDER
                             ) and (
                                 (hasattr(shape, "name") and shape.name == image_name)
-                                or (hasattr(shape, "alt_text") and shape.alt_text == image_name)
+                                or (
+                                    hasattr(shape, "alt_text")
+                                    and shape.alt_text == image_name
+                                )
                             ):
                                 self._replace_single_image(slide, shape, image_path)
                                 found = True
                                 break
                         if not found:
-                            logger.warning(f"No image placeholder found with name/alt_text: {image_name}")
+                            logger.warning(
+                                f"No image placeholder found with name/alt_text: {image_name}"
+                            )
                 except ImageNotFoundError as e:
                     logger.warning(str(e))
                     continue
@@ -218,7 +248,12 @@ class PowerPointTemplate:
     def _replace_single_image(self, slide, shape, image_path: str) -> None:
         """Replace a single image with error handling."""
         try:
-            left, top, box_width, box_height = shape.left, shape.top, shape.width, shape.height
+            left, top, box_width, box_height = (
+                shape.left,
+                shape.top,
+                shape.width,
+                shape.height,
+            )
 
             sp = shape._element
             sp.getparent().remove(sp)
@@ -236,7 +271,9 @@ class PowerPointTemplate:
             new_left = left + int((box_width - new_width) / 2)
             new_top = top + int((box_height - new_height) / 2)
 
-            slide.shapes.add_picture(image_path, new_left, new_top, new_width, new_height)
+            slide.shapes.add_picture(
+                image_path, new_left, new_top, new_width, new_height
+            )
         except Exception as e:
             logger.exception("Failed to replace single image")
             raise PowerPointTemplateError(f"Failed to replace single image: {e}") from e
