@@ -1,0 +1,11 @@
+[project]
+name = "template-match"
+version = "0.1.0"
+description = "Script to find a certain symbol in a technical drawing"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "loguru>=0.7.3",
+    "matplotlib>=3.10.3",
+    "opencv-python>=4.11.0.86",
+]
